@@ -1,0 +1,54 @@
+#pragma once
+
+#include <string>
+
+#define ENUMERATE_TOKEN_TYPES(O) \
+    O(STRING) \
+    O(IDENTIFIER) \
+    O(INT) \
+    O(FLOAT) \
+    O(LEFT_PAREN) \
+    O(RIGHT_PAREN) \
+    O(LEFT_BRACKET) \
+    O(RIGHT_BRACKET) \
+    O(LEFT_SQUARE_BRACKET) \
+    O(RIGHT_SQUARE_BRACKET) \
+    O(COMMA)\
+    O(DOT) \
+    O(PLUS) \
+    O(MINUS) \
+    O(ASTERISK) \
+    O(SLASH) \
+    O(EQUALS) \
+    O(GREATER_THAN)\
+    O(LESS_THAN)\
+    O(GREATER_THAN_OR_EQUAL)\
+    O(LESS_THAN_OR_EQUAL)\
+    O(STORE) \
+    O(KW_IF) \
+    O(KW_THEN) \
+    O(KW_WHILE) \
+    O(KW_END) \
+    O(FUNC_DISP) \
+    O(END_OF_FILE)\
+    O(NEWLINE) \
+    O(UNKNOWN)\
+
+enum TokenType {
+#define __TOKENTYPE(op) \
+    op,
+    ENUMERATE_TOKEN_TYPES(__TOKENTYPE)
+#undef __TOKENTYPE
+};
+
+struct Token {
+    TokenType m_type;
+    std::string m_value;
+    int m_line { 0 };
+
+    explicit Token(TokenType type, const std::string& value, int line) : m_type(type), m_value(value), m_line(line) {}
+    explicit Token() = default;
+};
+
+const char* tokentype_to_string(TokenType);
+TokenType get_special_identifier(const std::string& str);
