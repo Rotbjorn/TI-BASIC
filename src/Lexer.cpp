@@ -39,6 +39,7 @@ Token Lexer::get_next_token() {
         if (m_char == '"')
             return get_string_token();
 
+
         switch(m_char) {
         case '(':
             advance();
