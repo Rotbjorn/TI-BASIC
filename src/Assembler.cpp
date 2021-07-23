@@ -41,12 +41,20 @@ void Assembler::write_int32(uint32_t value, int line) {
     write_int16(low, line);
 }
 
+void Assembler::write_constant(Value value, int line) {
+    write_op(Opcode::CONSTANT, line);
+    int index = add_constant(value);
+    write(index, line);
+}
+
 
 Bytecode* Assembler::get_bytecode() {
     Bytecode* bc = new Bytecode;
 
     size_t size = m_bytes.size();
     bc->m_size = size;
+
+    bc->m_constant_size = m_constants.size();
 
     bc->m_bytes = new uint8_t[size];
 
@@ -55,7 +63,5 @@ Bytecode* Assembler::get_bytecode() {
 
     return bc;
 }
-
-
 
 }

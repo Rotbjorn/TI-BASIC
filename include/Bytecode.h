@@ -14,8 +14,10 @@ struct Bytecode {
     size_t m_size;
 
     Value m_constants[512];
+    size_t m_constant_size;
 
-    void print_dirty();
+    void print_raw_bytecode();
+    void print_constants();
     ~Bytecode();
 };
 

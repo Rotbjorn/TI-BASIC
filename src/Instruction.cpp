@@ -37,8 +37,38 @@ Instruction instructions[127] = {
 DEF_INSTRUCTION(CONSTANT) {
     uint8_t index = read(vm->pc);
     Value constant = vm->bytecode->m_constants[index];
+    vm->stack.push(constant);
 }
 
+#define BINARY_OPERATION(op) \
+    do {\
+    double b = vm->stack.pop().number; \
+    double a = vm->stack.pop().number; \
+    vm->stack.push({a op b}); \
+} while (0)
+
+
+DEF_INSTRUCTION(ADD) {
+    BINARY_OPERATION(+);
+}
+
+DEF_INSTRUCTION(SUBTRACT) {
+    BINARY_OPERATION(-);
+}
+
+DEF_INSTRUCTION(MULTIPLY) {
+    BINARY_OPERATION(*);
+}
+
+DEF_INSTRUCTION(DIVIDE) {
+    BINARY_OPERATION(/);
+}
+
+#undef BINARY_OPERATION
+
+DEF_INSTRUCTION(NEGATE) {
+    vm->stack.push({-vm->stack.pop().number});
+}
 
 
 /*

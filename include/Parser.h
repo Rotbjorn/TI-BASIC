@@ -7,11 +7,30 @@
 
 namespace TIBASIC::Compiler {
 
+
+
+enum Precedence {
+    NONE,
+    ASSIGNMENT,
+    OR,
+    AND,
+    EQUALITY,
+    COMPARISON,
+    TERM,
+    FACTOR,
+    UNARY,
+    CALL,
+    PRIMARY
+};
+
+
 class Parser {
+
+    using ParseFunction = void (Parser::*)();
 
 private:
     Token *m_tokens;
-    Token *m_curr_token;
+    Token m_curr_token;
 
     size_t m_line;
     size_t m_index { 0 };
@@ -20,16 +39,17 @@ private:
 
 private:
     void parse_statements();
-    void parse_statement();
-
     void parse_expression();
-    void parse_term();
-    void parse_factor();
+    void parse_precedence(Precedence);
+    void parse_end();
 
+    void parse_grouping();
+    void parse_unary();
+    void parse_binary();
 
     /* Types */
     void parse_int();
-    void parse_float();
+    void parse_double();
     void parse_string();
     void parse_variable();
 
@@ -38,8 +58,13 @@ private:
 
     bool consume(TokenType);
     Token peek(int);
-
     void parse();
+
+
+    /* Rules */
+    Precedence get_precedence(TokenType);
+    ParseFunction get_infix(TokenType);
+    ParseFunction get_prefix(TokenType);
 
 public:
 
@@ -52,5 +77,7 @@ public:
     ~Parser();
 
 };
+
+using ParseFunction = void (Parser::*)();
 
 }

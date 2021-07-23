@@ -3,17 +3,6 @@
 
 #include <iostream>
 
-namespace TIBASIC::Runtime {
-
-void Stack::push(Value value) {
-    *stack_pointer++ = value;
-}
-
-Value Stack::pop() {
-    return *--stack_pointer;
-}
-
-}
 
 namespace TIBASIC::Runtime {
 

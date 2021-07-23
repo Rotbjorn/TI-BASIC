@@ -7,6 +7,11 @@ namespace TIBASIC {
 
 #define ENUMERATE_OPCODES(O) \
     O(CONSTANT) \
+    O(ADD) \
+    O(SUBTRACT) \
+    O(MULTIPLY) \
+    O(DIVIDE) \
+    O(NEGATE) \
     O(EXIT)
 
 

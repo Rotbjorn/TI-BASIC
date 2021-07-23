@@ -1,23 +1,14 @@
 #pragma once
 
-#include <cstdint>
 #include "Bytecode.h"
 #include "Register.h"
+#include "Stack.h"
+#include <cstdint>
 
 using PC = uint8_t*;
 
 namespace TIBASIC::Runtime {
 
-struct Stack {
-    Value stack[512];
-    Value* stack_pointer;
-
-    void push(Value);
-
-    Value pop();
-
-    Stack() : stack_pointer { stack } {}
-};
 
 struct VM {
     Register reg;

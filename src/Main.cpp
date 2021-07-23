@@ -12,6 +12,43 @@
 #define DEBUG_LEXER 0
 #define ASSEMBLER_DEBUG 1
 
+void repl() {
+    using namespace TIBASIC;
+    using namespace TIBASIC::Runtime;
+    using namespace TIBASIC::Compiler;
+
+
+
+    std::string input;
+    while(true) {
+        std::cout << " > ";
+        getline(std::cin, input);
+
+        Lexer lexer(input);
+        auto tokens = lexer.get_tokens();
+        Parser parser(tokens);
+        Bytecode* bc = parser.generate_bytecode();
+
+        std::cout << "\n";
+        Disassembler::disassemble_bytecode(*bc, "REPL");
+
+        std::cout << "\nRaw bytecode:\n";
+        bc->print_raw_bytecode();
+        std::cout << "\nConstants:\n";
+        bc->print_constants();
+
+        if(!parser.m_had_error) {
+            TIBASIC::Runtime::VM vm;
+            vm.execute(*bc);
+            vm.display_stack("Stack");
+        } else {
+            std::cout << "Parser error!\n";
+        }
+
+        delete bc;
+    }
+}
+
 int main(int argc, char **argv) {
 
     if (argc == 0) {
@@ -33,6 +70,8 @@ int main(int argc, char **argv) {
         << "    -db, --debug-bytecode       Pretty-prints bytecode file out to readable instructions\n";
         return 0;
     }
+
+    repl();
 
     std::string test1 = "Disp \"Hello, World!\nIF A>=B\nTHEN\nDisp 13.123\nEND";
     std::string test2 = "12 + 3 + 4 - 5";
@@ -68,10 +107,16 @@ int main(int argc, char **argv) {
     using TIBASIC::Opcode;
     TIBASIC::Compiler::Assembler assembler;
 
-    int index = assembler.add_constant({1337.420});
+    int index_a = assembler.add_constant({420});
+    int index_b = assembler.add_constant({69});
 
     assembler.write_op(Opcode::CONSTANT);
-    assembler.write(index);
+    assembler.write(index_a);
+
+    assembler.write_op(Opcode::CONSTANT);
+    assembler.write(index_b);
+
+    assembler.write_op(Opcode::SUBTRACT);
 
     assembler.write(Opcode::EXIT);
     assembler.write(0);
@@ -81,10 +126,9 @@ int main(int argc, char **argv) {
 #endif
     TIBASIC::Disassembler::disassemble_bytecode(*bc, "Tester Chunk");
 
-    exit(0);
 
     std::cout << "\n";
-    bc->print_dirty();
+    bc->print_raw_bytecode();
     std::cout << "\n";
 
     if(parser.m_had_error) {

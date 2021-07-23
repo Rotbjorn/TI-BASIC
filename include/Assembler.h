@@ -18,9 +18,12 @@ struct Assembler {
     int add_constant(Value value);
 
     void write_op(TIBASIC::Opcode, int = -1);
+
     void write(uint8_t, int = -1);
     void write_int16(uint16_t, int = -1);
     void write_int32(uint32_t, int = -1);
+
+    void write_constant(Value, int = -1);
 
     TIBASIC::Bytecode* get_bytecode();
 
