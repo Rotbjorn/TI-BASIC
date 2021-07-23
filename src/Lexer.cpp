@@ -144,7 +144,7 @@ Token Lexer::get_number_token() {
     }
 
     if(m_char == '.') {
-        type = TokenType::FLOAT;
+        type = TokenType::DOUBLE;
         value.push_back(m_char);
         advance();
         while(is_digit(m_char)) {

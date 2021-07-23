@@ -9,16 +9,12 @@ using PC = uint8_t*;
 namespace TIBASIC::Runtime {
 
 struct Stack {
-    uint8_t stack[512];
-    uint8_t* stack_pointer;
+    Value stack[512];
+    Value* stack_pointer;
 
-    void push(int8_t);
-    void push_int16(int16_t);
-    void push_int32(int32_t);
+    void push(Value);
 
-    uint8_t pop();
-    uint16_t pop_int16();
-    uint32_t pop_int32();
+    Value pop();
 
     Stack() : stack_pointer { stack } {}
 };
@@ -30,9 +26,11 @@ struct VM {
 
     Stack stack;
 
+    Bytecode* bytecode;
+
     int32_t exit_code = 0;
 
-    void run_bytecode(Bytecode& bc);
+    void execute(Bytecode& bc);
 
     void display_stack(const char*);
 };

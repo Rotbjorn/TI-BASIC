@@ -23,7 +23,7 @@ void Parser::parse_statement() {
     switch(m_curr_token->m_type) {
     case TokenType::IDENTIFIER:
     case TokenType::INT:
-    case TokenType::FLOAT:
+    case TokenType::DOUBLE:
     case TokenType::STRING:
         parse_expression();
         break;
@@ -34,13 +34,13 @@ void Parser::parse_statement() {
         consume(TokenType::FUNC_DISP);
         parse_expression();
 
-        if(m_asm.last_opcode == Opcode::EQUALS_INT32) {
-            m_asm.write_op(Opcode::PRINT_INT8, m_line);
-        } else if (peek(-1).m_type == TokenType::STRING) {
-            m_asm.write_op(Opcode::PRINT_STRING, m_line);
-        } else {
-            m_asm.write(Opcode::PRINT_INT32, m_line);
-        }
+        //if(m_asm.last_opcode == Opcode::EQUALS_INT32) {
+        //    m_asm.write_op(Opcode::PRINT_INT8, m_line);
+        //} else if (peek(-1).m_type == TokenType::STRING) {
+        //    m_asm.write_op(Opcode::PRINT_STRING, m_line);
+        //} else {
+        //    m_asm.write(Opcode::PRINT_INT32, m_line);
+        //}
 
         break;
     }
@@ -65,13 +65,13 @@ void Parser::parse_expression() {
         parse_term();
         switch(op->m_type) {
         case TokenType::PLUS:
-            m_asm.write(Opcode::ADD_INT32, op->m_line);
+            //m_asm.write(Opcode::ADD_INT32, op->m_line);
             break;
         case TokenType::MINUS:
-            m_asm.write(Opcode::SUB_INT32, op->m_line);
+            //m_asm.write(Opcode::SUB_INT32, op->m_line);
             break;
         case TokenType::EQUALS:
-            m_asm.write(Opcode::EQUALS_INT32, op->m_line);
+            //m_asm.write(Opcode::EQUALS_INT32, op->m_line);
             break;
         default:
             std::cout << "Unhandled (parse_expression)\n";
@@ -95,7 +95,7 @@ void Parser::parse_factor() {
     case TokenType::INT:
         parse_int();
         break;
-    case TokenType::FLOAT:
+    case TokenType::DOUBLE:
         parse_float();
         break;
     case TokenType::IDENTIFIER:
@@ -115,7 +115,7 @@ void Parser::parse_factor() {
 void Parser::parse_int() {
     int32_t value = std::stoi(m_curr_token->m_value);
 
-    m_asm.write(Opcode::PUSH_INT32, m_line);
+    //m_asm.write(Opcode::PUSH_INT32, m_line);
     m_asm.write_int32(value, m_line);
     consume(m_curr_token->m_type);
 
@@ -129,10 +129,10 @@ void Parser::parse_string() {
     std::cout << "parse_string: " << value << std::endl;
 
     for(char ch : value) {
-        m_asm.write_op(Opcode::PUSH_INT8, m_line);
+        //m_asm.write_op(Opcode::PUSH_INT8, m_line);
         m_asm.write((int8_t) ch);
     }
-    m_asm.write_op(Opcode::PUSH_INT8);
+    //m_asm.write_op(Opcode::PUSH_INT8);
     m_asm.write(value.size());
     consume(TokenType::STRING);
 }
@@ -140,7 +140,7 @@ void Parser::parse_string() {
 void Parser::parse_variable() {
     std::string reg = m_curr_token->m_value;
     consume(TokenType::IDENTIFIER);
-    m_asm.write(Opcode::PUSH_REG, m_line);
+    //m_asm.write(Opcode::PUSH_REG, m_line);
     m_asm.write(reg[0] - 'A', m_line);
 }
 
@@ -153,11 +153,11 @@ void Parser::parse_store() {
     // Save latest opcode written?
     Opcode last_op = (Opcode) m_asm.m_bytes.back();
     // If last OP pushed INT8, use STORE_INT8 instead
-    if(last_op == EQUALS_INT8 || last_op == EQUALS_INT16 || last_op == EQUALS_INT32) {
-        m_asm.write(Opcode::STORE_INT8, m_line);
-    } else {
-        m_asm.write(Opcode::STORE_INT32, m_line);
-    }
+    //if(last_op == EQUALS_INT8 || last_op == EQUALS_INT16 || last_op == EQUALS_INT32) {
+    //    m_asm.write(Opcode::STORE_INT8, m_line);
+    //} else {
+    //    m_asm.write(Opcode::STORE_INT32, m_line);
+    //}
 
     m_asm.write(reg, m_line);
 
@@ -192,7 +192,7 @@ void Parser::parse() {
 }
 
 
-TIBASIC::Bytecode Parser::generate_bytecode() {
+TIBASIC::Bytecode* Parser::generate_bytecode() {
     parse();
     m_asm.write(Opcode::EXIT, m_line);
     m_asm.write(0, 1);

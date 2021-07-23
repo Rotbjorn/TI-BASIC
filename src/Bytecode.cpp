@@ -12,13 +12,18 @@ void Bytecode::print_dirty() {
     for(size_t i = 0; i < m_size; i++) {
         int8_t byte = m_bytes[i];
 
-        std::cout << std::setfill('0') << std::setw(2) << ((int16_t)byte & 0xFF) << " ";
+        std::cout << std::setfill('0') << std::setw(2) << ((uint16_t)byte & 0xFF) << " ";
         if (count % 8 == 0) {
             std::cout << "\n";
         }
         count++;
     }
     std::cout << std::dec;
+}
+
+Bytecode::~Bytecode() {
+    std::cout << "Destroyed Bytecode\n";
+    delete[] m_bytes;
 }
 
 }

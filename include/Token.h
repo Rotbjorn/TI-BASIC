@@ -6,7 +6,7 @@
     O(STRING) \
     O(IDENTIFIER) \
     O(INT) \
-    O(FLOAT) \
+    O(DOUBLE) \
     O(LEFT_PAREN) \
     O(RIGHT_PAREN) \
     O(LEFT_BRACKET) \

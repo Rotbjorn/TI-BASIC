@@ -43,7 +43,7 @@ private:
 
 public:
 
-    TIBASIC::Bytecode generate_bytecode();
+    TIBASIC::Bytecode* generate_bytecode();
     int* get_debug_lines();
 
     bool m_had_error { false };

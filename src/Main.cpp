@@ -9,8 +9,8 @@
 #include <iomanip>
 #include <iostream>
 
-#define DEBUG_LEXER 1
-#define ASSEMBLER_DEBUG 0
+#define DEBUG_LEXER 0
+#define ASSEMBLER_DEBUG 1
 
 int main(int argc, char **argv) {
 
@@ -60,35 +60,31 @@ int main(int argc, char **argv) {
 #endif
 
 #if 1
-    TIBASIC::Bytecode bc;
+    TIBASIC::Bytecode* bc;
 
     TIBASIC::Compiler::Parser parser(tokens);
 
 #if ASSEMBLER_DEBUG == 1
+    using TIBASIC::Opcode;
     TIBASIC::Compiler::Assembler assembler;
-    assembler.write(TIBASIC::Opcode::PUSH_INT8);
-    assembler.write(32);
 
-    assembler.write(TIBASIC::Opcode::PUSH_INT16);
-    assembler.write_int16(32500);
+    int index = assembler.add_constant({1337.420});
 
-    assembler.write(TIBASIC::Opcode::PUSH_INT32);
-    assembler.write_int32(1337420);
+    assembler.write_op(Opcode::CONSTANT);
+    assembler.write(index);
 
-    assembler.write(TIBASIC::Opcode::PRINT_INT32);
-    assembler.write(TIBASIC::Opcode::PRINT_INT16);
-    assembler.write(TIBASIC::Opcode::PRINT_INT8);
-
-    assembler.write(TIBASIC::Opcode::EXIT);
+    assembler.write(Opcode::EXIT);
     assembler.write(0);
     bc = assembler.get_bytecode();
 #else
     bc = parser.generate_bytecode();
 #endif
-    TIBASIC::Disassembler::disassemble_bytecode(bc, "Tester Chunk");
+    TIBASIC::Disassembler::disassemble_bytecode(*bc, "Tester Chunk");
+
+    exit(0);
 
     std::cout << "\n";
-    bc.print_dirty();
+    bc->print_dirty();
     std::cout << "\n";
 
     if(parser.m_had_error) {
@@ -99,7 +95,7 @@ int main(int argc, char **argv) {
     TIBASIC::Runtime::VM vm;
 
     std::cout << "== Program started == \n";
-    vm.run_bytecode(bc);
+    vm.execute(*bc);
     std::cout << "===================== \n";
     std::cout << "Program finished execution with exit code " << vm.exit_code << "\n";
 
@@ -108,6 +104,8 @@ int main(int argc, char **argv) {
     vm.reg.display_registers("Test Register (end)");
 
     std::cout << "\n```\n";
+
+    delete bc;
 
     return 0;
 #endif
