@@ -18,6 +18,7 @@ enum Precedence {
     COMPARISON,
     TERM,
     FACTOR,
+    EXPONENT,
     UNARY,
     CALL,
     PRIMARY
@@ -48,11 +49,21 @@ struct Parser {
     void parse_unary();
     void parse_binary();
 
+    void parse_and();
+    void parse_or();
+
+    /* Statements */
+    void parse_if_statement();
+    void parse_while_statement();
+
     /* Types */
     void parse_int();
     void parse_double();
     void parse_string();
+
     void parse_variable();
+    void parse_number_variable();
+    void parse_string_variable();
 
     void parse_store();
 

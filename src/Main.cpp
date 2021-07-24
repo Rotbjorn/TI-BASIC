@@ -18,42 +18,100 @@ void repl() {
     using namespace TIBASIC::Compiler;
 
 
+    Bytecode* last_executed_bc = nullptr;
+    int* debug_lines = nullptr;
 
-    std::string input;
+    std::vector<Token> last_lexer_result;
+
     TIBASIC::Runtime::VM vm;
     while(true) {
-        std::cout << " > ";
-        getline(std::cin, input);
+        std::string backup_input;
+        std::string input;
+        while(true) {
+            std::string buffer;
+            std::cout << " > ";
+            getline(std::cin, buffer);
+            if(buffer == ":run")
+                break;
+            else if(buffer == ":raw") {
+                if(last_executed_bc) {
+                    std::cout << "\nRaw bytecode:\n";
+                    last_executed_bc->print_raw_bytecode();
+                }
+            } else if(buffer == ":lexer") {
+                if(last_lexer_result.size() != 0) {
+                    std::cout << std::setfill(' ') << std::setw(25) << std::left << "Type" << std::setw(15) <<  "Value"  << "Line\n";
+                    for (auto& token : last_lexer_result) {
+                        std::cout << std::setw(25) << std::left << tokentype_to_string(token.m_type) <<  std::setw(15) << ("'" + token.m_value + "'") << token.m_line << "\n";
+                    }
+                }
+            } else if(buffer == ":format") {
+                if(last_executed_bc && debug_lines) {
+                    Disassembler::disassemble_bytecode(*last_executed_bc, debug_lines, "REPL");
+                }
+            } else if(buffer == ":stack") {
+                vm.display_stack("Stack");
+            } else if(buffer == ":reg") {
+                vm.reg.display_registers("Registers");
+            } else if(buffer == ":constants") {
+                if(last_executed_bc) {
+                    std::cout << "\nConstants:\n";
+                    last_executed_bc->print_constants();
+                }
+            } else if(buffer == ":clear") {
+                input.clear();
+            }else if(buffer == ":reset") {
+                vm = VM();
+            } else if(buffer == ":current") {
+                std::cout << "Current Input:\n```\n";
+                std::cout << input;
+                std::cout << "```\n";
+            } else if(buffer == ":undo") {
+                input = backup_input;
+            } else if(buffer == ":help") {
+                std::cout << ":run          - runs program\n";
+                std::cout << ":lexer        - prints lexer output\n";
+                std::cout << ":raw          - prints raw bytecode as hex\n";
+                std::cout << ":format       - prints disassembled bytecode\n";
+                std::cout << ":stack        - prints stack\n";
+                std::cout << ":reg          - prints registers\n";
+                std::cout << ":constants    - prints constants\n";
+                std::cout << ":clear        - clears current code input\n";
+                std::cout << ":current      - prints current code input\n";
+                std::cout << ":undo         - undoes latest input (only 1 time)\n";
+                std::cout << ":reset        - resets VM state (registers, stacks)\n";
+                std::cout << ":help         - prints this\n";
+            } else {
+                if(buffer.size() != 0) {
+                    backup_input = input;
+                    input += buffer + '\n';
+                }
+            }
+        }
 
         Lexer lexer(input);
         auto tokens = lexer.get_tokens();
 
-        std::cout << std::setfill(' ') << std::setw(25) << std::left << "Type" << std::setw(15) <<  "Value"  << "Line\n";
-        for (auto& token : tokens) {
-            std::cout << std::setw(25) << std::left << tokentype_to_string(token.m_type) <<  std::setw(15) << ("'" + token.m_value + "'") << token.m_line << "\n";
-        }
-
-
         Parser parser(tokens);
         Bytecode* bc = parser.generate_bytecode();
-        std::cout << "\n";
-        Disassembler::disassemble_bytecode(*bc, parser.get_debug_lines(), "REPL");
-        std::cout << "\nRaw bytecode:\n";
-        bc->print_raw_bytecode();
-        std::cout << "\nConstants:\n";
-        bc->print_constants();
-        std::cout << "\n";        
+
         if(!parser.m_had_error) {
             vm.execute(*bc);
-            vm.display_stack("Stack");
-            std::cout << "\n";
-            vm.reg.display_registers("Registers");
-            std::cout << "\n";
         } else {
             std::cout << "Parser error!\n";
         }
 
-        delete bc;
+        if(last_executed_bc) {
+            delete last_executed_bc;
+        }
+
+        if(debug_lines) {
+            delete[] debug_lines;
+        }
+
+        last_executed_bc = bc;
+        last_lexer_result = tokens;
+        debug_lines = parser.get_debug_lines();
     }
 }
 

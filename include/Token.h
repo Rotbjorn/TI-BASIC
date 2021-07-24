@@ -19,6 +19,7 @@
     O(MINUS) \
     O(ASTERISK) \
     O(SLASH) \
+    O(ARROW) \
     O(EQUAL) \
     O(NOT_EQUAL) \
     O(GREATER) \
@@ -28,9 +29,13 @@
     O(STORE) \
     O(KW_IF) \
     O(KW_THEN) \
-    O(KW_WHILE) \
     O(KW_END) \
+    O(KW_ELSE) \
+    O(KW_WHILE) \
+    O(KW_AND) \
+    O(KW_OR) \
     O(FUNC_DISP) \
+    O(FUNC_INPUT) \
     O(END_OF_FILE)\
     O(NEWLINE) \
     O(UNKNOWN)\

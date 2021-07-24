@@ -108,6 +108,7 @@ bool Value::operator==(const Value& other) {
     case ValueType::INT:        return as.integer_number == other.as.integer_number;
     case ValueType::DOUBLE:     return as.double_number == other.as.double_number;
     }
+    return false;
 }
 
 bool Value::operator!=(const Value& other) {

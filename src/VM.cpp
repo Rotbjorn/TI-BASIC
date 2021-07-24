@@ -11,10 +11,14 @@ void VM::execute(Bytecode& bc){
     bytecode = &bc;
 
     while(true) {
-        uint8_t instruction = *pc;
+        uint8_t opcode = *pc;
+
         pc++;
-        instructions[instruction](this);
-        if (instruction == Opcode::EXIT) break;
+
+        //std::cout << "Executing opcode: " << opcode_to_string((Opcode) opcode) << "\n";
+
+        instructions[opcode](this);
+        if (opcode == Opcode::EXIT) break;
     }
 }
 
@@ -23,7 +27,7 @@ void VM::display_stack(const char* name) {
     int count = 1;
 
     if (first == stack.stack_pointer) {
-        std::cout << "\n== " << name << " (Empty) ==\n\n";
+        std::cout << "== " << name << " (Empty) ==\n\n";
         return;
     }
 

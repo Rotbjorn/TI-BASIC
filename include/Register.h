@@ -1,11 +1,14 @@
 #pragma once
 
-#include <cstdint>
-#include <string>
+// TODO: Move String struct out of Value.h
+#include "Value.h"
 
-#define INT_REGISTER_SIZE 26
+#include <cstdint>
+
+#define NUMBER_REGISTER_SIZE 26
 #define STRING_REGISTER_SIZE 5
-#define LIST_REGISTER_SIZE 6
+
+#define LIST_COUNT 6
 #define LIST_CAPACITY 100
 
 namespace TIBASIC::Runtime {
@@ -64,9 +67,9 @@ enum ListRegister {
 };
 
 struct Register {
-    double numbers[INT_REGISTER_SIZE] { 0 };
-    std::string strings[STRING_REGISTER_SIZE];
-    double lists[LIST_REGISTER_SIZE][LIST_CAPACITY];
+    double numbers[NUMBER_REGISTER_SIZE] { 0 };
+    String strings[STRING_REGISTER_SIZE];
+    double lists[LIST_COUNT][LIST_CAPACITY];
 
     void display_registers(const char*);
 };

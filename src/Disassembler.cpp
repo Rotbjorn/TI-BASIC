@@ -112,29 +112,66 @@ NO_OPERAND_DISASSEMBLE_INSTRUCTION(ADD)
 NO_OPERAND_DISASSEMBLE_INSTRUCTION(SUBTRACT)
 NO_OPERAND_DISASSEMBLE_INSTRUCTION(MULTIPLY)
 NO_OPERAND_DISASSEMBLE_INSTRUCTION(DIVIDE)
+NO_OPERAND_DISASSEMBLE_INSTRUCTION(POWER)
+
 NO_OPERAND_DISASSEMBLE_INSTRUCTION(PUSH_TRUE)
 NO_OPERAND_DISASSEMBLE_INSTRUCTION(PUSH_FALSE)
+
 NO_OPERAND_DISASSEMBLE_INSTRUCTION(EQUAL)
 NO_OPERAND_DISASSEMBLE_INSTRUCTION(NOT_EQUAL)
 NO_OPERAND_DISASSEMBLE_INSTRUCTION(GREATER)
 NO_OPERAND_DISASSEMBLE_INSTRUCTION(GREATER_OR_EQUAL)
 NO_OPERAND_DISASSEMBLE_INSTRUCTION(LESS)
 NO_OPERAND_DISASSEMBLE_INSTRUCTION(LESS_OR_EQUAL)
+
 NO_OPERAND_DISASSEMBLE_INSTRUCTION(NEGATE)
+
 NO_OPERAND_DISASSEMBLE_INSTRUCTION(PRINT)
+NO_OPERAND_DISASSEMBLE_INSTRUCTION(INPUT)
 
 DISASSEMBLE_INSTRUCTION(STORE_NUMBER) {
     uint8_t reg_index = read(pc);
-    std::cout << "STORE_NUMBER " << (char)(reg_index + 'A') << "\n";
+    std::cout << "STORE_NUMBER " << (char)(reg_index + 'A') << std::endl;
 }
 
 
 DISASSEMBLE_INSTRUCTION(GET_NUMBER) {
     uint8_t reg_index = read(pc);
-    std::cout << "GET_NUMBER " << (char)(reg_index + 'A') << "\n";
+    std::cout << "GET_NUMBER " << (char)(reg_index + 'A') << std::endl;
+}
+
+DISASSEMBLE_INSTRUCTION(STORE_STRING) {
+    uint8_t reg_index = read(pc);
+    std::cout << "STORE_STRING " << (char)(reg_index + 'A') << std::endl;
+}
+
+
+DISASSEMBLE_INSTRUCTION(GET_STRING) {
+    uint8_t reg_index = read(pc);
+    std::cout << "GET_STRING " << (char)(reg_index + 'A') << std::endl;
 }
 
 NO_OPERAND_DISASSEMBLE_INSTRUCTION(POP)
+
+DISASSEMBLE_INSTRUCTION(JUMP_IF_TRUE) {
+    uint16_t offset = read_int16(pc);
+    std::cout << "JUMP_IF_TRUE " << offset << std::endl;
+}
+
+DISASSEMBLE_INSTRUCTION(JUMP_IF_FALSE) {
+    uint16_t offset = read_int16(pc);
+    std::cout << "JUMP_IF_FALSE " << offset << std::endl;
+}
+
+DISASSEMBLE_INSTRUCTION(JUMP) {
+    uint16_t offset = read_int16(pc);
+    std::cout << "JUMP " << offset << std::endl;
+}
+
+DISASSEMBLE_INSTRUCTION(JUMP_BACK) {
+    uint16_t offset = read_int16(pc);
+    std::cout << "JUMP_BACK " << offset << std::endl;
+}
 
 DISASSEMBLE_INSTRUCTION(EXIT) {
     int8_t exit_code = read(pc);

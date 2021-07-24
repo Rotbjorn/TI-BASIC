@@ -1,4 +1,6 @@
 #include "Instruction.h"
+
+#include <cmath>
 #include <iostream>
 
 #define DEF_INSTRUCTION(n) void INS_##n(TIBASIC::Runtime::VM* vm)
@@ -81,6 +83,14 @@ DEF_INSTRUCTION(DIVIDE) {
     BINARY_OPERATION(/);
 }
 
+DEF_INSTRUCTION(POWER) {
+    double exponent = vm->stack.pop().as.double_number;
+    double base = vm->stack.pop().as.double_number;
+
+    double result = std::pow(base, exponent);
+    vm->stack.push(Value(result));
+}
+
 DEF_INSTRUCTION(PUSH_TRUE) {
     vm->stack.push(Value(true));
 }
@@ -128,10 +138,24 @@ DEF_INSTRUCTION(PRINT) {
     std::cout << "\n";
 }
 
+DEF_INSTRUCTION(INPUT) {
+    std::string test;
+    getline(std::cin, test);
+    vm->stack.push(Value(std::stod(test)));
+}
+
 DEF_INSTRUCTION(STORE_NUMBER) {
     uint8_t reg_index = read(vm->pc);
     // TODO: Assert that popped value is int or double
-    vm->reg.numbers[reg_index] = vm->stack.pop().as.double_number;
+
+    Value value = vm->stack.pop();
+
+    if(!value.is_double()) {
+        std::cerr << "Can't store non-number value in number register!\n";
+    } else {
+        vm->reg.numbers[reg_index] = value.as.double_number;
+    }
+
 }
 
 DEF_INSTRUCTION(GET_NUMBER) {
@@ -139,9 +163,65 @@ DEF_INSTRUCTION(GET_NUMBER) {
     vm->stack.push(Value(vm->reg.numbers[reg_index]));
 }
 
+DEF_INSTRUCTION(STORE_STRING) {
+    uint8_t reg_index = read(vm->pc);
+
+    Value value = vm->stack.pop();
+
+    if(!value.is_string()) {
+        std::cerr << "Can't store non-string value in string register!\n";
+    } else {
+        vm->reg.strings[reg_index] = value.as.string;
+    }
+}
+
+DEF_INSTRUCTION(GET_STRING) {
+    uint8_t reg_index = read(vm->pc);
+
+    vm->stack.push(Value(vm->reg.strings[reg_index]));
+}
+
 DEF_INSTRUCTION(POP) {
     vm->stack.pop();
 }
+
+DEF_INSTRUCTION(JUMP_IF_TRUE) {
+
+    uint16_t offset = read_int16(vm->pc);
+
+    if(vm->stack.peek().is_double()) {
+        if(vm->stack.peek().as.double_number != 0)
+            vm->pc += offset;
+    } else if(vm->stack.peek().as.boolean) {
+        vm->pc += offset;
+    }
+
+
+}
+
+
+DEF_INSTRUCTION(JUMP_IF_FALSE) {
+
+    uint16_t offset = read_int16(vm->pc);
+
+    if(vm->stack.peek().is_double()) {
+        if(vm->stack.peek().as.double_number == 0)
+            vm->pc += offset;
+    } else if(!vm->stack.peek().as.boolean) {
+        vm->pc += offset;
+    }
+}
+
+DEF_INSTRUCTION(JUMP) {
+    uint16_t offset = read_int16(vm->pc);
+    vm->pc += offset;
+}
+
+DEF_INSTRUCTION(JUMP_BACK) {
+    uint16_t offset = read_int16(vm->pc);
+    vm->pc -= offset;
+}
+
 DEF_INSTRUCTION(EXIT) {
     int8_t return_code = read(vm->pc);
 

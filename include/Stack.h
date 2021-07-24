@@ -11,7 +11,7 @@ struct Stack {
     void push(Value);
     Value pop();
 
-    Value peek(int);
+    Value peek(int = 0);
 
     Stack() : stack_pointer { stack } {}
 };

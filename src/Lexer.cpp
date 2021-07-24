@@ -83,6 +83,9 @@ Token Lexer::get_next_token() {
         case '/':
             advance();
             return create(TokenType::SLASH, "/");
+        case '^':
+            advance();
+            return create(TokenType::ARROW, "^");
         case '=':
             advance();
             return create(TokenType::EQUAL, "=");
@@ -94,7 +97,7 @@ Token Lexer::get_next_token() {
             } else {
                 m_had_error = true;
                 advance();
-                std::cout << "! must be followed by = (!=)\n";
+                std::cout << "! must be followed by a '=' (!=)\n";
             }
         case '>':
             if (peek(1) == '=') {
@@ -170,7 +173,10 @@ Token Lexer::get_number_token() {
 Token Lexer::get_identifier_token() {
     std::string value;
 
-    while(is_valid_char(m_char)) {
+    value.push_back(m_char);
+    advance();
+
+    while(is_valid_char(m_char) || is_digit(m_char)) {
         value.push_back(m_char);
         advance();
     }
