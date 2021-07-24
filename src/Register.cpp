@@ -15,7 +15,7 @@ void Register::display_registers(const char* name) {
         std::string str;
         str.push_back((index + 'A'));
         str.append(": ");
-        str.append(std::to_string(int_registers[index]));
+        str.append(std::to_string(numbers[index]));
         str.append(", ");
 
         std::cout << std::setw(8) << str;;

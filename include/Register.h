@@ -11,13 +11,13 @@
 namespace TIBASIC::Runtime {
 
 enum RegisterType : int8_t {
-    Int32Register,
+    NumberRegister,
     StringRegister,
     ListRegister
 
 };
 
-enum Int32Register {
+enum NumberRegister {
     A,
     B,
     C,
@@ -64,9 +64,9 @@ enum ListRegister {
 };
 
 struct Register {
-    int32_t int_registers[INT_REGISTER_SIZE] { 0 };
-    std::string string_registers[STRING_REGISTER_SIZE];
-    int32_t list_register[LIST_REGISTER_SIZE][LIST_CAPACITY];
+    double numbers[INT_REGISTER_SIZE] { 0 };
+    std::string strings[STRING_REGISTER_SIZE];
+    double lists[LIST_REGISTER_SIZE][LIST_CAPACITY];
 
     void display_registers(const char*);
 };

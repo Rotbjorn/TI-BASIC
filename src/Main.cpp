@@ -9,8 +9,8 @@
 #include <iomanip>
 #include <iostream>
 
-#define DEBUG_LEXER 0
-#define ASSEMBLER_DEBUG 1
+#define DEBUG_LEXER 1
+#define ASSEMBLER_DEBUG 0
 
 void repl() {
     using namespace TIBASIC;
@@ -20,27 +20,35 @@ void repl() {
 
 
     std::string input;
+    TIBASIC::Runtime::VM vm;
     while(true) {
         std::cout << " > ";
         getline(std::cin, input);
 
         Lexer lexer(input);
         auto tokens = lexer.get_tokens();
+
+        std::cout << std::setfill(' ') << std::setw(25) << std::left << "Type" << std::setw(15) <<  "Value"  << "Line\n";
+        for (auto& token : tokens) {
+            std::cout << std::setw(25) << std::left << tokentype_to_string(token.m_type) <<  std::setw(15) << ("'" + token.m_value + "'") << token.m_line << "\n";
+        }
+
+
         Parser parser(tokens);
         Bytecode* bc = parser.generate_bytecode();
-
         std::cout << "\n";
-        Disassembler::disassemble_bytecode(*bc, "REPL");
-
+        Disassembler::disassemble_bytecode(*bc, parser.get_debug_lines(), "REPL");
         std::cout << "\nRaw bytecode:\n";
         bc->print_raw_bytecode();
         std::cout << "\nConstants:\n";
         bc->print_constants();
-
+        std::cout << "\n";        
         if(!parser.m_had_error) {
-            TIBASIC::Runtime::VM vm;
             vm.execute(*bc);
             vm.display_stack("Stack");
+            std::cout << "\n";
+            vm.reg.display_registers("Registers");
+            std::cout << "\n";
         } else {
             std::cout << "Parser error!\n";
         }
@@ -82,8 +90,9 @@ int main(int argc, char **argv) {
     std::string test7 = "Disp 3";
     std::string test8 = "Disp \"Hello World\"\nDisp \"How are you today";
     std::string test9 = test6 + "\nDisp C";
+    std::string test10 = "12->A\nA->B";
 
-    TIBASIC::Compiler::Lexer lexer(test9);
+    TIBASIC::Compiler::Lexer lexer(test10);
 
     auto tokens = lexer.get_tokens();
 

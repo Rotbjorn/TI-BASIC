@@ -7,7 +7,7 @@
 
 namespace TIBASIC::Compiler {
 
-
+struct Parser;
 
 enum Precedence {
     NONE,
@@ -23,22 +23,23 @@ enum Precedence {
     PRIMARY
 };
 
+using ParseFunction = void (Parser::*)();
 
-class Parser {
+struct Parser {
 
-    using ParseFunction = void (Parser::*)();
 
-private:
     Token *m_tokens;
     Token m_curr_token;
 
-    size_t m_line;
     size_t m_index { 0 };
+    size_t m_size;
 
     Assembler m_asm;
 
-private:
-    void parse_statements();
+    void parse();
+    void parse_declaration();
+    void parse_statement();
+
     void parse_expression();
     void parse_precedence(Precedence);
     void parse_end();
@@ -53,20 +54,17 @@ private:
     void parse_string();
     void parse_variable();
 
-    /* Statements */
     void parse_store();
 
-    bool consume(TokenType);
-    Token peek(int);
-    void parse();
-
+    bool consume(TokenType, const char* = "[DEFAULT] » Consume Error!");
+    Token* peek(int);
+    int find(TokenType);
 
     /* Rules */
     Precedence get_precedence(TokenType);
     ParseFunction get_infix(TokenType);
     ParseFunction get_prefix(TokenType);
 
-public:
 
     TIBASIC::Bytecode* generate_bytecode();
     int* get_debug_lines();

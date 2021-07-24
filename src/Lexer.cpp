@@ -85,24 +85,34 @@ Token Lexer::get_next_token() {
             return create(TokenType::SLASH, "/");
         case '=':
             advance();
-            return create(TokenType::EQUALS, "=");
+            return create(TokenType::EQUAL, "=");
+        case '!':
+            if (peek(1) == '=') {
+                advance();
+                advance();
+                return create(TokenType::NOT_EQUAL, "!=");
+            } else {
+                m_had_error = true;
+                advance();
+                std::cout << "! must be followed by = (!=)\n";
+            }
         case '>':
             if (peek(1) == '=') {
                 advance();
                 advance();
-                return create(TokenType::GREATER_THAN_OR_EQUAL, ">=");
+                return create(TokenType::GREATER_OR_EQUAL, ">=");
             } else {
                 advance();
-                return create(TokenType::GREATER_THAN, ">");
+                return create(TokenType::GREATER, ">");
             }
         case '<':
             if (peek(1) == '=') {
                 advance();
                 advance();
-                return create(TokenType::LESS_THAN_OR_EQUAL, "<=");
+                return create(TokenType::LESS_OR_EQUAL, "<=");
             } else {
                 advance();
-                return create(TokenType::LESS_THAN, "<");
+                return create(TokenType::LESS, "<");
             }
         case '\n':
             advance();

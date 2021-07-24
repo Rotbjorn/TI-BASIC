@@ -42,14 +42,31 @@ DEF_INSTRUCTION(CONSTANT) {
 
 #define BINARY_OPERATION(op) \
     do {\
-    double b = vm->stack.pop().number; \
-    double a = vm->stack.pop().number; \
-    vm->stack.push({a op b}); \
+    if (!vm->stack.peek(0).is_double() || !vm->stack.peek(1).is_double()) {\
+    std::cout << "Operands are not doubles!\n"; \
+} \
+    double b = vm->stack.pop().as.double_number; \
+    double a = vm->stack.pop().as.double_number; \
+    vm->stack.push(Value(a op b)); \
 } while (0)
 
 
 DEF_INSTRUCTION(ADD) {
-    BINARY_OPERATION(+);
+    if(vm->stack.peek(0).is_string() && vm->stack.peek(1).is_string()) {
+        String b = vm->stack.pop().as.string;
+        String a = vm->stack.pop().as.string;
+
+        a.concat(b);
+
+        vm->stack.push(Value(a));
+
+    } else if(vm->stack.peek(0).is_double() && vm->stack.peek(1).is_double()) {
+        double b = vm->stack.pop().as.double_number;
+        double a = vm->stack.pop().as.double_number;
+        vm->stack.push(Value(a + b));
+    } else {
+        std::cerr << "Can't add those two values!!!\n";
+    }
 }
 
 DEF_INSTRUCTION(SUBTRACT) {
@@ -64,27 +81,67 @@ DEF_INSTRUCTION(DIVIDE) {
     BINARY_OPERATION(/);
 }
 
-#undef BINARY_OPERATION
+DEF_INSTRUCTION(PUSH_TRUE) {
+    vm->stack.push(Value(true));
+}
+
+DEF_INSTRUCTION(PUSH_FALSE) {
+    vm->stack.push(Value(false));
+}
+
+DEF_INSTRUCTION(EQUAL) {
+    Value rhs = vm->stack.pop();
+    Value lhs = vm->stack.pop();
+
+    vm->stack.push(Value(lhs == rhs));
+}
+
+DEF_INSTRUCTION(NOT_EQUAL) {
+    Value rhs = vm->stack.pop();
+    Value lhs = vm->stack.pop();
+
+    vm->stack.push(Value(lhs != rhs));
+}
+
+DEF_INSTRUCTION(GREATER) {
+    BINARY_OPERATION(>);
+}
+
+DEF_INSTRUCTION(GREATER_OR_EQUAL) {
+    BINARY_OPERATION(>=);
+}
+
+DEF_INSTRUCTION(LESS) {
+    BINARY_OPERATION(<);
+}
+
+DEF_INSTRUCTION(LESS_OR_EQUAL) {
+    BINARY_OPERATION(<=);
+}
 
 DEF_INSTRUCTION(NEGATE) {
-    vm->stack.push({-vm->stack.pop().number});
+    vm->stack.push(Value(-(vm->stack.pop().as.double_number)));
 }
 
-
-/*
-DEF_INSTRUCTION(PRINT_STRING) {
-    int8_t length = vm->stack.pop();
-    char* string = new char[length + 2];
-    string[length + 1] = 0;
-    string[length--] = '\n';
-    while (length >= 0) {
-        string[length--] = (char)vm->stack.pop();
-    }
-    std::cout << string;
-    delete[] string;
+DEF_INSTRUCTION(PRINT) {
+    vm->stack.pop().print();
+    std::cout << "\n";
 }
-*/
 
+DEF_INSTRUCTION(STORE_NUMBER) {
+    uint8_t reg_index = read(vm->pc);
+    // TODO: Assert that popped value is int or double
+    vm->reg.numbers[reg_index] = vm->stack.pop().as.double_number;
+}
+
+DEF_INSTRUCTION(GET_NUMBER) {
+    uint8_t reg_index = read(vm->pc);
+    vm->stack.push(Value(vm->reg.numbers[reg_index]));
+}
+
+DEF_INSTRUCTION(POP) {
+    vm->stack.pop();
+}
 DEF_INSTRUCTION(EXIT) {
     int8_t return_code = read(vm->pc);
 

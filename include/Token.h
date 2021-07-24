@@ -19,11 +19,12 @@
     O(MINUS) \
     O(ASTERISK) \
     O(SLASH) \
-    O(EQUALS) \
-    O(GREATER_THAN)\
-    O(LESS_THAN)\
-    O(GREATER_THAN_OR_EQUAL)\
-    O(LESS_THAN_OR_EQUAL)\
+    O(EQUAL) \
+    O(NOT_EQUAL) \
+    O(GREATER) \
+    O(LESS) \
+    O(GREATER_OR_EQUAL) \
+    O(LESS_OR_EQUAL) \
     O(STORE) \
     O(KW_IF) \
     O(KW_THEN) \

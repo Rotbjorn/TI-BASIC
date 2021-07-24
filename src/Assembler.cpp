@@ -5,48 +5,31 @@
 namespace TIBASIC::Compiler {
 
 
+void Assembler::write_byte(uint8_t value, int line) {
+    m_bytes.push_back(value);
+    m_lines.push_back(line);
+}
+
+
+void Assembler::write_op(TIBASIC::Opcode op) {
+    write((uint8_t)op);
+    last_opcode = op;
+}
+
+void Assembler::write(uint8_t value) {
+    write_byte(value, m_line);
+}
+
 int Assembler::add_constant(Value value) {
     m_constants.push_back(value);
     return m_constants.size() - 1;
 }
 
-void Assembler::write_op(TIBASIC::Opcode op, int line) {
-    write((uint8_t)op, line);
-    last_opcode = op;
-}
-
-void Assembler::write(uint8_t value, int line) {
-
-    m_bytes.push_back(value);
-    m_lines.push_back(line);
-}
-
-void Assembler::write_int16(uint16_t value, int line) {
-
-    int8_t high = ((uint16_t) value >> 8) & 0xFF;
-    int8_t low = (value & 0xFF);
-
-    write(high, line);
-    write(low, line);
-
-}
-
-void Assembler::write_int32(uint32_t value, int line) {
-
-    int16_t high = ((uint32_t) value >> 16) & 0xFFFF;
-    int16_t low = (value & 0xFFFF);
-
-
-    write_int16(high, line);
-    write_int16(low, line);
-}
-
-void Assembler::write_constant(Value value, int line) {
-    write_op(Opcode::CONSTANT, line);
+void Assembler::write_constant(Value value) {
+    write_op(Opcode::CONSTANT);
     int index = add_constant(value);
-    write(index, line);
+    write(index);
 }
-
 
 Bytecode* Assembler::get_bytecode() {
     Bytecode* bc = new Bytecode;

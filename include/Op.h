@@ -11,7 +11,19 @@ namespace TIBASIC {
     O(SUBTRACT) \
     O(MULTIPLY) \
     O(DIVIDE) \
+    O(PUSH_TRUE) \
+    O(PUSH_FALSE) \
+    O(EQUAL) \
+    O(NOT_EQUAL) \
+    O(GREATER) \
+    O(LESS) \
+    O(GREATER_OR_EQUAL) \
+    O(LESS_OR_EQUAL) \
     O(NEGATE) \
+    O(PRINT) \
+    O(STORE_NUMBER) \
+    O(GET_NUMBER) \
+    O(POP) \
     O(EXIT)
 
 
