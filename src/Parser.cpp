@@ -28,9 +28,10 @@ void Parser::parse_declaration() {
     Token* previous_token = peek(-1);
     Token* store_token = peek(index);
     if((store_token != nullptr) // Make sure that the peek() gave us a token within bounds.
-            && (m_curr_token.m_type >= TokenType::FUNC_DISP && m_curr_token.m_type <= TokenType::FUNC_INPUT) // Checks for '%Func% 12->A'
+            && (!(m_curr_token.m_type >= TokenType::FUNC_DISP && m_curr_token.m_type <= TokenType::FUNC_INPUT)) // Checks for '%Func% 12->A'
             && (previous_token == nullptr || previous_token->m_type == TokenType::NEWLINE) // Makes sure the last token was either a newline or nullptr (index -1)
             && (store_token->m_type == TokenType::STORE)) {
+
         parse_store();
     }else {
         parse_statement();

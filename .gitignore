@@ -1,0 +1,16 @@
+
+bin/
+Makefile   
+run.fish  
+
+# VS Code
+ti-basic.code-workspace
+
+# QtCreator
+ti-basic.cflags  
+ti-basic.creator       
+ti-basic.cxxflags  
+ti-basic.includes
+ti-basic.config  
+ti-basic.creator.user  
+ti-basic.files
