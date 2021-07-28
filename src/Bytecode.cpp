@@ -1,7 +1,6 @@
 #include "Bytecode.h"
 #include "Op.h"
 
-#include <iostream>
 #include <iomanip>
 
 namespace TIBASIC {

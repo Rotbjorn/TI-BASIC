@@ -1,7 +1,5 @@
 #include "Disassembler.h"
 
-#include <iostream>
-#include <iomanip>
 
 #define DISASSEMBLE_INSTRUCTION(n) static void DIS_##n(Bytecode& bc, uint8_t*& pc)
 

@@ -1,7 +1,5 @@
 #include "Assembler.h"
 
-#include <iostream>
-
 namespace TIBASIC::Compiler {
 
 

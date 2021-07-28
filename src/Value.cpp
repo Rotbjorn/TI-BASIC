@@ -1,7 +1,6 @@
 #include "Value.h"
 
-#include <cstring>
-#include <iostream>
+#include "pch.h"
 
 namespace TIBASIC {
 

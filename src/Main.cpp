@@ -24,16 +24,21 @@ void repl() {
     std::vector<Token> last_lexer_result;
 
     TIBASIC::Runtime::VM vm;
+    std::string last_ran_input;
     while(true) {
-        std::string backup_input;
         std::string input;
+        std::string backup_input;
         while(true) {
             std::string buffer;
             std::cout << " > ";
             getline(std::cin, buffer);
-            if(buffer == ":run")
+            if(buffer == ":run") {
+                last_ran_input = input;
                 break;
-            else if(buffer == ":raw") {
+            } else if (buffer == ":rerun") {
+                input = last_ran_input;
+                break;
+            }else if(buffer == ":raw") {
                 if(last_executed_bc) {
                     std::cout << "\nRaw bytecode:\n";
                     last_executed_bc->print_raw_bytecode();

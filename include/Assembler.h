@@ -3,9 +3,6 @@
 #include "Bytecode.h"
 #include "Op.h"
 
-#include <cstdint>
-#include <vector>
-
 namespace TIBASIC::Compiler {
 
 struct Assembler {

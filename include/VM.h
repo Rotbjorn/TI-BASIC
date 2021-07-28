@@ -3,7 +3,6 @@
 #include "Bytecode.h"
 #include "Register.h"
 #include "Stack.h"
-#include <cstdint>
 
 using PC = uint8_t*;
 

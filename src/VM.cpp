@@ -1,9 +1,6 @@
 #include "VM.h"
 #include "Instruction.h"
 
-#include <iostream>
-
-
 namespace TIBASIC::Runtime {
 
 void VM::execute(Bytecode& bc){

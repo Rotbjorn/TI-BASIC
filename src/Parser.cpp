@@ -72,7 +72,7 @@ void Parser::parse_precedence(Precedence precedence) {
     ParseFunction prefix_function = get_prefix(m_curr_token.m_type);
 
     if(prefix_function == nullptr) {
-        std::cout << "Expected expression\n";
+        std::cout << "Expected expression. (get_prefix() == nullptr) for: " << tokentype_to_string(m_curr_token.m_type) << "\n";
         return;
     }
 
@@ -261,6 +261,9 @@ void Parser::parse_variable() {
         parse_string_variable();
         break;
     }
+    default:
+        std::cerr << "(parse_variable) Unknown variable: " << m_curr_token.m_value << "\n";
+        break;
         // TODO: Add list registers here!
     }
 }
@@ -279,7 +282,7 @@ void Parser::parse_string_variable() {
     std::string register_name = m_curr_token.m_value;
 
     if(std::memcmp(register_name.c_str(), "Str", 3) != 0) {
-        std::cerr << "'" << register_name << "' is not a valid variable name\n";
+        std::cerr << "'" << register_name << "' is not a valid string variable name\n";
     }
     size_t reg_index = register_name.back() - '1';
     m_asm.write_op(Opcode::GET_STRING);
@@ -399,9 +402,11 @@ Precedence Parser::get_precedence(TokenType type) {
     case TokenType::KW_THEN:                    return Precedence::NONE;
     case TokenType::KW_END:                     return Precedence::NONE;
     case TokenType::KW_ELSE:                    return Precedence::NONE;
+    case TokenType::KW_WHILE:                   return Precedence::NONE;
     case TokenType::KW_AND:                     return Precedence::AND;
     case TokenType::KW_OR:                      return Precedence::OR;
     case TokenType::FUNC_DISP:                  return Precedence::NONE;
+    case TokenType::FUNC_INPUT:                 return Precedence::NONE;
     case TokenType::END_OF_FILE:                return Precedence::NONE;
     case TokenType::NEWLINE:                    return Precedence::NONE;
     case TokenType::UNKNOWN:                    return Precedence::NONE;
@@ -440,9 +445,11 @@ ParseFunction Parser::get_infix(TokenType type) {
     case TokenType::KW_THEN:                    return nullptr;
     case TokenType::KW_END:                     return nullptr;
     case TokenType::KW_ELSE:                    return nullptr;
+    case TokenType::KW_WHILE:                   return nullptr;
     case TokenType::KW_AND:                     return &Parser::parse_and;
     case TokenType::KW_OR:                      return &Parser::parse_or;
     case TokenType::FUNC_DISP:                  return nullptr;
+    case TokenType::FUNC_INPUT:                 return nullptr;
     case TokenType::END_OF_FILE:                return nullptr;
     case TokenType::NEWLINE:                    return nullptr;
     case TokenType::UNKNOWN:                    return nullptr;
@@ -481,9 +488,11 @@ ParseFunction Parser::get_prefix(TokenType type) {
     case TokenType::KW_THEN:                    return nullptr;
     case TokenType::KW_END:                     return nullptr;
     case TokenType::KW_ELSE:                    return nullptr;
+    case TokenType::KW_WHILE:                   return nullptr;
     case TokenType::KW_AND:                     return nullptr;
     case TokenType::KW_OR:                      return nullptr;
     case TokenType::FUNC_DISP:                  return nullptr;
+    case TokenType::FUNC_INPUT:                 return nullptr;
     case TokenType::END_OF_FILE:                return nullptr;
     case TokenType::NEWLINE:                    return nullptr;
     case TokenType::UNKNOWN:                    return nullptr;
